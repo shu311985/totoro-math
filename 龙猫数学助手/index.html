@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>龙猫数学助手</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'PingFang SC', sans-serif; color: #fff; }
+        body {
+            background: url('https://pic.rmb.bdstatic.com/0c1dec075c601ba62c397831fdd2f8db.jpeg') no-repeat center center/cover;
+            height: 100vh; display: flex; flex-direction: column; position: relative;
+        }
+        body::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(18, 35, 30, 0.5); z-index: -1;
+        }
+        .glass { background: rgba(255, 255, 255, 0.1); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .navbar { display: flex; justify-content: space-between; align-items: center; padding: 20px 50px; }
+        .main-content { flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; }
+        .hero-text h2 { font-size: 52px; margin-bottom: 20px; }
+        .hero-text p { font-size: 18px; opacity: 0.8; margin-bottom: 50px; }
+        .entry-cards { display: flex; gap: 30px; margin-top: 20px; }
+        .card { width: 260px; height: 160px; border-radius: 25px; display: flex; flex-direction: column; justify-content: center; align-items: center; cursor: pointer; transition: transform 0.3s, background 0.3s; }
+        .card:hover { transform: scale(1.05); background: rgba(255, 255, 255, 0.2); }
+        .card-icon { font-size: 40px; margin-bottom: 10px; }
+        .card h3 { font-size: 20px; }
+    </style>
+</head>
+<body>
+
+    <nav class="navbar">
+        <div style="font-size: 20px; font-weight: bold;">龙猫数学助手</div>
+        <div>Totoro Math</div>
+    </nav>
+
+    <main class="main-content">
+        <div class="hero-text">
+            <h2>“搭上龙猫巴士，跳进数学的世界”</h2>
+            <p>让数学学习，变得如龙猫伞下般安稳与高效</p>
+        </div>
+
+        <div class="entry-cards">
+            <a href="login.html" id="user-link" style="text-decoration: none; color: inherit;">
+                <div class="card glass">
+                    <div class="card-icon">👤</div>
+                    <h3>个人中心 / 登录</h3>
+                </div>
+            </a>
+
+            <a href="camera.html" style="text-decoration: none; color: inherit;">
+                <div class="card glass">
+                    <div class="card-icon">📷</div>
+                    <h3>上传题目</h3>
+                </div>
+            </a>
+
+            <a href="history.html" style="text-decoration: none; color: inherit;">
+                <div class="card glass">
+                    <div class="card-icon">📚</div>
+                    <h3>历史题目</h3>
+                </div>
+            </a>
+        </div>
+    </main>
+
+    <script>
+        window.onload = function() {
+            const user = localStorage.getItem('totoro_user');
+            if (user) {
+                // 1. 修改导航栏标题
+                document.querySelector('.navbar div:first-child').innerText = "你好, " + user;
+                
+                // 2. 修改卡片链接和文字
+                const loginLink = document.getElementById('user-link');
+                loginLink.href = "profile.html";
+                loginLink.querySelector('h3').innerText = "已登录: " + user;
+            }
+        };
+    </script>
+</body>
+</html>

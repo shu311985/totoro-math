@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>登录 - 龙猫数学助手</title>
+<style>
+    body {
+        margin: 0; height: 100vh;
+        background: url('https://www.otashift-tokyo.com/wp-content/uploads/2019/05/studioghibli.jpg') no-repeat center center/cover;
+        display: flex; justify-content: center; align-items: center;
+        font-family: 'PingFang SC', sans-serif;
+    }
+    .login-card {
+        background: rgba(0, 0, 0, 0.4); 
+        border: 1px solid rgba(0, 0, 0, 0.8);
+        padding: 40px; border-radius: 30px;
+        width: 350px; text-align: center;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+    }
+    h2, p { color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+    input {
+        width: 100%; padding: 12px; margin-bottom: 15px; border-radius: 15px;
+        border: 1px solid rgba(255, 255, 255, 0.2); background: rgba(0, 0, 0, 0.3);
+        color: #fff; outline: none;
+    }
+    .login-btn {
+        width: 100%; padding: 12px; background: #6dc28d; border: none;
+        border-radius: 15px; color: #fff; font-weight: bold; cursor: pointer;
+    }
+    a { display: block; margin-top: 20px; color: #fff; text-decoration: none; opacity: 0.8; font-size: 12px; }
+</style>
+</head>
+<body>
+
+    <div class="login-card">
+        <h2>你好，我的旅伴</h2>
+        <p>这一站，让我们开启数学之旅</p>
+        
+        <form id="loginForm" onsubmit="handleLogin(event)">
+            <input type="text" id="username" placeholder="请输入你的昵称" required>
+            <input type="password" placeholder="密码 (选填)">
+            <button type="submit" class="login-btn">登录</button>
+        </form>
+        
+        <a href="index.html">← 返回首页</a>
+    </div>
+
+    <script>
+        // 1. 一进入页面就检查是否已经登录
+        window.onload = function() {
+            if (localStorage.getItem('totoro_user')) {
+                window.location.href = 'profile.html';
+            }
+        };
+
+        // 2. 统一的登录处理逻辑
+        function handleLogin(event) {
+            event.preventDefault();
+            const name = document.getElementById('username').value;
+            // 存入名字
+            localStorage.setItem('totoro_user', name);
+            // 登录后直接去个人中心
+            window.location.href = 'profile.html';
+        }
+    </script>
+</body>
+</html>
