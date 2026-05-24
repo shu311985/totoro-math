@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>拍照计算 - 龙猫数学助手</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs"></script>
+    <style>
+        body { margin: 0; height: 100vh; background: url('https://images5.alphacoders.com/926/thumb-1920-926342.jpg') no-repeat center center/cover; display: flex; flex-direction: column; justify-content: center; align-items: center; font-family: 'PingFang SC', sans-serif; color: #fff; }
+        .camera-frame { width: 300px; height: 300px; border: 2px dashed rgba(255, 255, 255, 0.4); border-radius: 25px; display: flex; justify-content: center; align-items: center; margin-bottom: 20px; background: rgba(0, 0, 0, 0.3); overflow: hidden; }
+        #image-preview { max-width: 100%; max-height: 100%; display: none; }
+        #result-text { margin: 15px 0; font-size: 22px; font-weight: bold; color: #6dc28d; text-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        .action-label { padding: 15px 40px; background: #6dc28d; border-radius: 30px; cursor: pointer; transition: 0.3s; }
+        .action-label:hover { background: #57a876; }
+    </style>
+</head>
+<body>
+
+    <div class="camera-frame">
+        <div id="placeholder-text">请拍照或上传题目</div>
+        <img id="image-preview" src="#" alt="预览">
+    </div>
+
+    <div id="result-text">正在加载模型...</div>
+
+    <label class="action-label" for="file-upload">
+        拍照 / 选择题目
+        <input type="file" id="file-upload" accept="image/*" style="display: none;" onchange="handleFile(this)">
+    </label>
+    
+    <a href="index.html" style="margin-top:20px; color:white; opacity: 0.8;">← 返回首页</a>
+
+    <script>
+        let model;
+
+        // 1. 安全守卫：未登录直接踢走
+        window.onload = function() {
+            if (!localStorage.getItem('totoro_user')) {
+                alert("请先登录喔~");
+                window.location.href = 'login.html';
+                return;
+            }
+            initModel();
+        };
+
+       // 2. 初始化模型 (修改文案)
+        async function initModel() {
+            try {
+                model = await tf.loadLayersModel('model/model.json');
+                document.getElementById('result-text').innerText = "模型已就绪，请上传题目";
+                document.getElementById('result-text').style.color = "#6dc28d";
+            } catch (err) {
+                const resText = document.getElementById('result-text');
+                resText.innerText = "糟糕……后台出了点问题"; // 修改后的文案
+                resText.style.color = "#ffffff";
+                console.error(err);
+            }
+        }
+
+        // 3. 处理图片并显示计算结果
+        async function handleFile(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = async function(e) {
+                    const img = document.getElementById('image-preview');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById('placeholder-text').style.display = 'none';
+
+                    img.onload = async () => {
+                        document.getElementById('result-text').innerText = "正在计算...";
+                        const result = await predict(img);
+                        
+                        // 显示识别出的等式和结果
+                        // 假设 result 是模型返回的数字，比如 5
+                        document.getElementById('result-text').innerText = "计算结果: " + result;
+                    };
+                };
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+        // 4. 模型预测核心
+        async function predict(imgElement) {
+            return tf.tidy(() => { // tf.tidy 自动清理内存，防止越用越卡
+                const tensor = tf.browser.fromPixels(imgElement)
+                    .resizeNearestNeighbor([28, 28])
+                    .mean(2) // 转灰度
+                    .expandDims(0)
+                    .expandDims(-1)
+                    .div(255.0);
+                
+                const output = model.predict(tensor);
+                return output.argMax(-1).dataSync()[0];
+            });
+        }
+    </script>
+</body>
+</html>
